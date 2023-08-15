@@ -1,0 +1,152 @@
+import pandas as pd
+from tkinter import Tk, filedialog
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
+
+# Función para categorizar la edad en rangos
+def categorize_age(age):
+    if 10 <= age <= 14:
+        return "10-14"
+    elif 15 <= age <= 19:
+        return "15-19"
+    elif 20 <= age <= 24:
+        return "20-24"
+    elif 25 <= age <= 29:
+        return "25-29"
+    else:
+        return "Otro"
+
+# Función para categorizar el régimen
+def categorize_regime(regime):
+    if "CONTRIBUTIVO" in regime:
+        return "CONTRIBUTIVO"
+    else:
+        return "SUBSIDIADO"
+
+# Función para categorizar el procedimiento
+def categorize_procedure(procedure):
+    if procedure == "ADOLESCENCIA - PRIMERA VEZ  POR MEDICO":
+        return "PRIMERA VEZ"
+    else:
+        return "CONTROL"
+
+# Abrir el explorador de archivos y seleccionar el archivo Excel
+root = Tk()
+root.withdraw()  # Ocultar la ventana principal
+input_file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+output_file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
+root.destroy()
+
+# Leer el archivo Excel
+data = pd.read_excel(input_file_path)
+
+# Aplicar las funciones de categorización a las columnas
+data['Sexo'] = data['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer")
+data['Edad'] = data['EDAD'].apply(categorize_age)
+data['Régimen'] = data['nomempresa'].apply(categorize_regime)
+data['Frecuencia'] = data['nomprocedimiento'].apply(categorize_procedure)
+
+# Filtrar los datos para PRIMERA VEZ y CONTROL
+primera_vez_data = data[data['Frecuencia'] == 'PRIMERA VEZ']
+control_data = data[data['Frecuencia'] == 'CONTROL']
+
+# Crear un nuevo archivo Excel y una hoja llamada "Consulta del joven"
+workbook = Workbook()
+consult_sheet = workbook.active
+consult_sheet.title = "Consulta del joven"
+
+# Escribir encabezados de edades y sexos
+ages = ['10-14', '15-19', '20-24', '25-29']
+sexes = ['Hombre', 'Mujer']
+consult_sheet.cell(row=2, column=2, value='PRIMERA VEZ').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=2, start_column=2, end_row=2, end_column=9)
+
+# Escribir encabezado 10-14
+consult_sheet.cell(row=3, column=2, value='10-14').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=3, start_column=2, end_row=3, end_column=3)
+
+# Escribir encabezado 15-19
+consult_sheet.cell(row=3, column=4, value='15-19').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=3, start_column=4, end_row=3, end_column=5)
+
+# Escribir encabezado 20-24
+consult_sheet.cell(row=3, column=6, value='20-24').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=3, start_column=6, end_row=3, end_column=7)
+
+# Escribir encabezado 25-29
+consult_sheet.cell(row=3, column=8, value='25-29').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=3, start_column=8, end_row=3, end_column=9)
+
+# Escribir encabezado HOMBRE
+consult_sheet.cell(row=4, column=2, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=4, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=6, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=8, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=2, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=4, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=6, value='HOMBRE').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=8, value='HOMBRE').alignment = Alignment(horizontal='center')
+
+# Escribir encabezado MUJER
+consult_sheet.cell(row=4, column=3, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=5, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=7, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=4, column=9, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=3, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=5, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=7, value='MUJER').alignment = Alignment(horizontal='center')
+consult_sheet.cell(row=11, column=9, value='MUJER').alignment = Alignment(horizontal='center')
+
+
+# Llenar la tabla PRIMERA VEZ
+for row, regime in enumerate(['CONTRIBUTIVO', 'SUBSIDIADO'], start=5):
+    consult_sheet.cell(row=row, column=1, value=regime)
+    col = 2
+    for age in ages:
+        for sex in sexes:
+            count = primera_vez_data[
+                (primera_vez_data['Régimen'] == regime) &
+                (primera_vez_data['Edad'] == age) &
+                (primera_vez_data['Sexo'] == sex)
+            ]['Frecuencia'].count()
+            consult_sheet.cell(row=row, column=col, value=count)
+            col += 1
+
+# Escribir encabezado CONTROL
+consult_sheet.merge_cells('B9:I9')
+consult_sheet.cell(row=9, column=2, value='CONTROL').alignment = Alignment(horizontal='center')
+
+# Escribir encabezado 10-14
+consult_sheet.cell(row=10, column=2, value='10-14').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=10, start_column=2, end_row=10, end_column=3)
+
+# Escribir encabezado 15-19
+consult_sheet.cell(row=10, column=4, value='15-19').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=10, start_column=4, end_row=10, end_column=5)
+
+# Escribir encabezado 20-24
+consult_sheet.cell(row=10, column=6, value='20-24').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=10, start_column=6, end_row=10, end_column=7)
+
+# Escribir encabezado 25-29
+consult_sheet.cell(row=10, column=8, value='25-29').alignment = Alignment(horizontal='center')
+consult_sheet.merge_cells(start_row=10, start_column=8, end_row=10, end_column=9)
+
+
+# Llenar la tabla CONTROL
+for row, regime in enumerate(['CONTRIBUTIVO', 'SUBSIDIADO'], start=12):
+    consult_sheet.cell(row=row, column=1, value=regime)
+    col = 2
+    for age in ages:
+        for sex in sexes:
+            count = control_data[
+                (control_data['Régimen'] == regime) &
+                (control_data['Edad'] == age) &
+                (control_data['Sexo'] == sex)
+            ]['Frecuencia'].count()
+            consult_sheet.cell(row=row, column=col, value=count)
+            col += 1
+
+# Guardar el archivo Excel
+workbook.save(output_file_path)
+print(f"Tablas creadas y guardadas en {output_file_path}")
