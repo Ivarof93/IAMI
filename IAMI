@@ -1,9 +1,3 @@
-import pandas as pd
-from tkinter import Tk, filedialog
-from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
-
-
 def consulta_del_joven():
 
 # Función para categorizar la edad en rangos
