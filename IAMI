@@ -215,7 +215,8 @@ def consulta_del_joven():
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
 
-
+# Llamada a la función para generar las tablas
+consulta_del_joven()
 
 #============================================================================================================================================================================================
 
@@ -315,8 +316,6 @@ def citologia():
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
 
-# Llamada a la función para generar las tablas
-consulta_del_joven()
 # Llamada a la función para generar las tablas
 citologia()
 
