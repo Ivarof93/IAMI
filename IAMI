@@ -1,7 +1,8 @@
 import pandas as pd
 from tkinter import Tk, filedialog
 from openpyxl import Workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+
 
 def generar_tablas_excel():
 
@@ -100,6 +101,37 @@ def generar_tablas_excel():
     consult_sheet.cell(row=11, column=9, value='MUJER').alignment = Alignment(horizontal='center')
 
 
+    # Crear estilo para celdas de encabezados con fondo azul suave y letras blancas
+    header_fill = PatternFill(start_color="B0C4DE", end_color="B0C4DE", fill_type="solid")
+    white_font = Font(color="FFFFFF")
+
+    # Crear estilo para celdas con bordes
+    border_style = Border(
+        left=Side(border_style="thin", color="000000"),
+        right=Side(border_style="thin", color="000000"),
+        top=Side(border_style="thin", color="000000"),
+        bottom=Side(border_style="thin", color="000000")
+    )
+
+    # Aplicar estilo a las celdas de encabezados
+    for col in consult_sheet.iter_cols(min_row=2, max_row=4, min_col=2, max_col=9):
+        for cell in col:
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+            cell.font = white_font
+
+    # Aplicar estilo a la primera columna
+    for col in consult_sheet.iter_cols(min_row=2, max_row=6, min_col=1, max_col=1):
+        for cell in col:
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+            cell.font = white_font
+
+    # Aplicar estilo a las celdas con bordes
+    for row in consult_sheet.iter_rows(min_row=2, max_row=6, min_col=1, max_col=9):
+        for cell in row:
+            cell.border = border_style
+
     # Llenar la tabla PRIMERA VEZ
     for row, regime in enumerate(['CONTRIBUTIVO', 'SUBSIDIADO'], start=5):
         consult_sheet.cell(row=row, column=1, value=regime)
@@ -135,6 +167,26 @@ def generar_tablas_excel():
     consult_sheet.merge_cells(start_row=10, start_column=8, end_row=10, end_column=9)
 
 
+    # Aplicar estilo a las celdas de encabezados
+    for col in consult_sheet.iter_cols(min_row=9, max_row=11, min_col=2, max_col=9):
+        for cell in col:
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+            cell.font = white_font
+
+    # Aplicar estilo a las celdas de primera columna
+    for col in consult_sheet.iter_cols(min_row=9, max_row=13, min_col=1, max_col=1):
+        for cell in col:
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+            cell.font = white_font
+
+    # Aplicar estilo a las celdas con bordes
+    for row in consult_sheet.iter_rows(min_row=9, max_row=13, max_col=9):
+        for cell in row:
+            cell.border = border_style
+
+
     # Llenar la tabla CONTROL
     for row, regime in enumerate(['CONTRIBUTIVO', 'SUBSIDIADO'], start=12):
         consult_sheet.cell(row=row, column=1, value=regime)
@@ -149,9 +201,10 @@ def generar_tablas_excel():
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
 
-    # Guardar el archivo Excel
-    workbook.save(output_file_path)
-    print(f"Tablas creadas y guardadas en {output_file_path}")
+        # Guardar el archivo Excel
+        workbook.save(output_file_path)
+        print(f"Tablas creadas y guardadas en {output_file_path}")
+
 
 # Llamada a la función para generar las tablas
 generar_tablas_excel()
