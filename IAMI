@@ -3,6 +3,7 @@ from tkinter import Tk, filedialog
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 
+
 # Función para categorizar la edad en rangos
 def categorize_age(age):
     if 10 <= age <= 14:
@@ -26,7 +27,11 @@ root.destroy()
 # Leer el archivo Excel
 data = pd.read_excel(input_file_path)
 
+# Crear un nuevo archivo Excel
+workbook = Workbook()
+
 def consulta_del_joven():
+    consult_sheet = workbook.create_sheet("Consulta del joven")
 
     # Función para categorizar el régimen
     def categorize_regime(regime):
@@ -51,22 +56,18 @@ def consulta_del_joven():
 
 
     # Aplicar las funciones de categorización a las columnas
-    filtered_data['Sexo'] = filtered_data['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer")
-    filtered_data['Edad'] = filtered_data['EDAD'].apply(categorize_age)
-    filtered_data['Régimen'] = filtered_data['nomempresa'].apply(categorize_regime)
-    filtered_data['Frecuencia'] = filtered_data['nomprocedimiento'].apply(categorize_procedure)
-
+    filtered_data = filtered_data.assign(
+        Sexo=filtered_data['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer"),
+        Edad=filtered_data['EDAD'].apply(categorize_age),
+        Régimen=filtered_data['nomempresa'].apply(categorize_regime),
+        Frecuencia=filtered_data['nomprocedimiento'].apply(categorize_procedure)
+    )
 
     # Filtrar los datos para PRIMERA VEZ y CONTROL
     # Filtrar los datos para PRIMERA VEZ y CONTROL
     primera_vez_data = filtered_data[filtered_data['Frecuencia'] == 'PRIMERA VEZ']
     control_data = filtered_data[filtered_data['Frecuencia'] == 'CONTROL']
 
-
-# Crear un nuevo archivo Excel y una hoja llamada "Consulta del joven"
-    workbook = Workbook()
-    consult_sheet = workbook.active
-    consult_sheet.title = "Consulta del joven"
 
     # Escribir encabezados de edades y sexos
     ages = ['10-14', '15-19', '20-24', '25-29']
@@ -218,14 +219,14 @@ def consulta_del_joven():
         workbook.save(output_file_path)
         print(f"Tablas creadas y guardadas en {output_file_path}")
 
-
 # Llamada a la función para generar las tablas
 consulta_del_joven()
+
 
 #============================================================================================================================================================================================
 
 def citologia():
-
+    consult_sheet = workbook.create_sheet("Citología")
     # Función para categorizar el régimen
     def categorize_regime(regime):
         if "CONTRIBUTIVO" in regime:
@@ -239,14 +240,10 @@ def citologia():
 
 
     # Aplicar las funciones de categorización a las columnas
-    filtered_data_1['Edad'] = filtered_data_1['EDAD'].apply(categorize_age)
-    filtered_data_1['Régimen'] = filtered_data_1['nomempresa'].apply(categorize_regime)
-
-
-    # Crear un nuevo archivo Excel y una hoja llamada "Consulta del joven"
-    workbook = Workbook()
-    consult_sheet = workbook.active
-    consult_sheet.title = "Citología"
+    filtered_data_1 = filtered_data_1.assign(
+        Edad=filtered_data_1['EDAD'].apply(categorize_age),
+        Régimen=filtered_data_1['nomempresa'].apply(categorize_regime)
+    )
 
     # Escribir encabezados de edades y sexos
     ages = ['10-14', '15-19', '20-24', '25-29']
@@ -323,12 +320,14 @@ def citologia():
                     ].shape[0]  # Utilizamos .shape[0] para contar las filas
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
-
-
-        # Guardar el archivo Excel
-        workbook.save(output_file_path)
-        print(f"Tablas creadas y guardadas en {output_file_path}")
-
-
 # Llamada a la función para generar las tablas
 citologia()
+
+# Llamada a la función para generar las tablas
+consulta_del_joven()
+# Llamada a la función para generar las tablas
+citologia()
+
+# Guardar el archivo Excel
+workbook.save(output_file_path)
+print(f"Tablas creadas y guardadas en {output_file_path}")
