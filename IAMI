@@ -215,12 +215,6 @@ def consulta_del_joven():
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
 
-        # Guardar el archivo Excel
-        workbook.save(output_file_path)
-        print(f"Tablas creadas y guardadas en {output_file_path}")
-
-# Llamada a la función para generar las tablas
-consulta_del_joven()
 
 
 #============================================================================================================================================================================================
@@ -320,8 +314,6 @@ def citologia():
                     ].shape[0]  # Utilizamos .shape[0] para contar las filas
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
-# Llamada a la función para generar las tablas
-citologia()
 
 # Llamada a la función para generar las tablas
 consulta_del_joven()
