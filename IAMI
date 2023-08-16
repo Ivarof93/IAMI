@@ -4,7 +4,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 
 
-def generar_tablas_excel():
+def consulta_del_joven():
 
 # Función para categorizar la edad en rangos
     def categorize_age(age):
@@ -210,4 +210,4 @@ def generar_tablas_excel():
 
 
 # Llamada a la función para generar las tablas
-generar_tablas_excel()
+consulta_del_joven()
