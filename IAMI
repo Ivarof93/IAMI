@@ -43,17 +43,28 @@ def consulta_del_joven():
     # Leer el archivo Excel
     data = pd.read_excel(input_file_path)
 
+
+    # Filtrar los datos para los procedimientos específicos
+    filtered_data = data[data['nomprocedimiento'].isin(["ADOLESCENCIA - CONSULTA DE CONTROL POR ENFERMERIA",
+                                                        "ADOLESCENCIA - CONSULTA DE CONTROL POR MEDICO",
+                                                        "ADOLESCENCIA - PRIMERA VEZ  POR MEDICO",
+                                                        "JUVENTUD - CONSULTA DE CONTROL POR MEDICO"])]
+
+
     # Aplicar las funciones de categorización a las columnas
-    data['Sexo'] = data['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer")
-    data['Edad'] = data['EDAD'].apply(categorize_age)
-    data['Régimen'] = data['nomempresa'].apply(categorize_regime)
-    data['Frecuencia'] = data['nomprocedimiento'].apply(categorize_procedure)
+    filtered_data['Sexo'] = filtered_data['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer")
+    filtered_data['Edad'] = filtered_data['EDAD'].apply(categorize_age)
+    filtered_data['Régimen'] = filtered_data['nomempresa'].apply(categorize_regime)
+    filtered_data['Frecuencia'] = filtered_data['nomprocedimiento'].apply(categorize_procedure)
+
 
     # Filtrar los datos para PRIMERA VEZ y CONTROL
-    primera_vez_data = data[data['Frecuencia'] == 'PRIMERA VEZ']
-    control_data = data[data['Frecuencia'] == 'CONTROL']
+    # Filtrar los datos para PRIMERA VEZ y CONTROL
+    primera_vez_data = filtered_data[filtered_data['Frecuencia'] == 'PRIMERA VEZ']
+    control_data = filtered_data[filtered_data['Frecuencia'] == 'CONTROL']
 
-    # Crear un nuevo archivo Excel y una hoja llamada "Consulta del joven"
+
+# Crear un nuevo archivo Excel y una hoja llamada "Consulta del joven"
     workbook = Workbook()
     consult_sheet = workbook.active
     consult_sheet.title = "Consulta del joven"
