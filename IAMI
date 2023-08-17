@@ -1076,6 +1076,32 @@ def VIH():
 # Llamada a la función para generar las tablas
 VIH()
 #============================================================================================================================================================
+def prueba_de_embarazo():
+    consult_sheet = workbook.create_sheet("Pruebas de embarazo")
+
+    # Filtrar los datos para los procedimientos específicos
+    filtered_data = data[data['nomprocedimiento'].isin(["GONADOTROPINA CORIONICA SUBUNIDAD BETA CUALITATIVA PRUEBA DE EMBARAZO EN ORINA O SUERO", "PRUEBA RAPIDA DE EMBARAZO"])]
+
+    # Obtener los nombres de las columnas
+    column_names = filtered_data.columns.tolist()
+
+    # Agregar los nombres de las columnas como la primera fila en la hoja de cálculo
+    consult_sheet.append(column_names)
+
+    # Copiar los datos filtrados a la hoja "Pruebas de embarazo"
+    for idx, row in filtered_data.iterrows():
+        consult_sheet.append(list(row))
+
+
+# Llamada a la función para copiar los datos
+prueba_de_embarazo()
+
+# Guardar el archivo Excel
+workbook.save(output_file_path)
+print(f"Datos de pruebas de embarazo copiados y archivo guardado en {output_file_path}")
+
+
+#============================================================================================================================================================
 # Guardar el archivo Excel
 workbook.save(output_file_path)
 print(f"Tablas creadas y guardadas en {output_file_path}")
