@@ -1119,38 +1119,46 @@ def violencia_sexual():
 
     # Aplicar las funciones de categorización a las columnas
     filtered_data_1 = filtered_data_1.assign(
+        Sexo=filtered_data_1['codsexo'].apply(lambda x: "Hombre" if x == 1 else "Mujer"),
         Edad=filtered_data_1['EDAD'].apply(categorize_age),
         Régimen=filtered_data_1['nomempresa'].apply(categorize_regime)
+
     )
 
     # Escribir encabezados de edades y sexos
     ages = ['10-14', '15-19', '20-24', '25-29']
     sexes = ['Hombre', 'Mujer']
     consult_sheet.cell(row=2, column=2, value='CITOLOGÍA').alignment = Alignment(horizontal='center')
-    consult_sheet.merge_cells(start_row=2, start_column=2, end_row=2, end_column=5)
+    consult_sheet.merge_cells(start_row=2, start_column=2, end_row=2, end_column=9)
 
     # Escribir encabezado 10-14
     consult_sheet.cell(row=3, column=2, value='10-14').alignment = Alignment(horizontal='center')
-    consult_sheet.merge_cells(start_row=3, start_column=2, end_row=3, end_column=2)
+    consult_sheet.merge_cells(start_row=3, start_column=2, end_row=3, end_column=3)
 
     # Escribir encabezado 15-19
-    consult_sheet.cell(row=3, column=3, value='15-19').alignment = Alignment(horizontal='center')
-    consult_sheet.merge_cells(start_row=3, start_column=3, end_row=3, end_column=3)
+    consult_sheet.cell(row=3, column=4, value='15-19').alignment = Alignment(horizontal='center')
+    consult_sheet.merge_cells(start_row=3, start_column=4, end_row=3, end_column=5)
 
     # Escribir encabezado 20-24
-    consult_sheet.cell(row=3, column=4, value='20-24').alignment = Alignment(horizontal='center')
-    consult_sheet.merge_cells(start_row=3, start_column=4, end_row=3, end_column=4)
+    consult_sheet.cell(row=3, column=6, value='20-24').alignment = Alignment(horizontal='center')
+    consult_sheet.merge_cells(start_row=3, start_column=6, end_row=3, end_column=7)
 
     # Escribir encabezado 25-29
-    consult_sheet.cell(row=3, column=5, value='25-29').alignment = Alignment(horizontal='center')
-    consult_sheet.merge_cells(start_row=3, start_column=5, end_row=3, end_column=5)
+    consult_sheet.cell(row=3, column=8, value='25-29').alignment = Alignment(horizontal='center')
+    consult_sheet.merge_cells(start_row=3, start_column=8, end_row=3, end_column=9)
 
 
     # Escribir encabezado MUJER
-    consult_sheet.cell(row=4, column=2, value='MUJER').alignment = Alignment(horizontal='center')
     consult_sheet.cell(row=4, column=3, value='MUJER').alignment = Alignment(horizontal='center')
-    consult_sheet.cell(row=4, column=4, value='MUJER').alignment = Alignment(horizontal='center')
     consult_sheet.cell(row=4, column=5, value='MUJER').alignment = Alignment(horizontal='center')
+    consult_sheet.cell(row=4, column=7, value='MUJER').alignment = Alignment(horizontal='center')
+    consult_sheet.cell(row=4, column=9, value='MUJER').alignment = Alignment(horizontal='center')
+
+    # Escribir encabezado HOMBRE
+    consult_sheet.cell(row=4, column=2, value='HOMBRE').alignment = Alignment(horizontal='center')
+    consult_sheet.cell(row=4, column=4, value='HOMBRE').alignment = Alignment(horizontal='center')
+    consult_sheet.cell(row=4, column=6, value='HOMBRE').alignment = Alignment(horizontal='center')
+    consult_sheet.cell(row=4, column=8, value='HOMBRE').alignment = Alignment(horizontal='center')
 
 
     # Crear estilo para celdas de encabezados con fondo azul suave y letras blancas en negrilla
@@ -1167,7 +1175,7 @@ def violencia_sexual():
 
 
     # Aplicar estilo a las celdas de encabezados
-    for col in consult_sheet.iter_cols(min_row=2, max_row=4, min_col=2, max_col=5):
+    for col in consult_sheet.iter_cols(min_row=2, max_row=4, min_col=2, max_col=9):
         for cell in col:
             cell.fill = header_fill
             cell.alignment = Alignment(horizontal="center")
@@ -1182,7 +1190,7 @@ def violencia_sexual():
             consult_sheet.column_dimensions[cell.column_letter].width = 15  # Autoajustar el ancho de la columna
 
     # Aplicar estilo a las celdas con bordes
-    for row in consult_sheet.iter_rows(min_row=2, max_row=6, min_col=1, max_col=5):
+    for row in consult_sheet.iter_rows(min_row=2, max_row=6, min_col=1, max_col=9):
         for cell in row:
             cell.border = border_style
 
@@ -1191,10 +1199,11 @@ def violencia_sexual():
         consult_sheet.cell(row=row, column=1, value=regime)
         col = 2
         for age in ages:
-
+            for sex in sexes:
                 count = filtered_data_1[
                     (filtered_data_1['Régimen'] == regime) &
-                    (filtered_data_1['Edad'] == age)
+                    (filtered_data_1['Edad'] == age) &
+                    (filtered_data_1['Sexo'] == sex)
                     ].shape[0]  # Utilizamos .shape[0] para contar las filas
                 consult_sheet.cell(row=row, column=col, value=count)
                 col += 1
